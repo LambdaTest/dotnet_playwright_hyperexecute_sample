@@ -45,3 +45,5 @@ post:
 
 testSuites:
   - dotnet run $tests
+
+jobLabel: [playwright-Dotnet, win, matrix]

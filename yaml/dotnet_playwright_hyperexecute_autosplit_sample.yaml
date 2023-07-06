@@ -51,3 +51,5 @@ post:
 
 
 testRunnerCommand: dotnet run $test
+
+jobLabel: [playwright-Dotnet, win, autosplit]
