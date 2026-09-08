@@ -17,9 +17,11 @@ With TestMu AI (Formerly LambdaTest), you can run .NET Playwright tests using Hy
 
 ### Prerequisites
 
-- .NET SDK (latest stable)
+- .NET 8 SDK
 - A [TestMu AI](https://www.testmuai.com/) account with your username and access key
 - [HyperExecute CLI](https://www.testmuai.com/support/docs/hyperexecute-cli-run-tests-on-hyperexecute-grid/) binary for your OS
+
+The tests use NUnit and connect exclusively to the remote LambdaTest Playwright endpoint. Local Playwright browser binaries are not required.
 
 ### Setup
 
@@ -27,17 +29,18 @@ Clone and install dependencies:
 
 ```bash
 git clone https://github.com/LambdaTest/dotnet_playwright_hyperexecute_sample && cd dotnet_playwright_hyperexecute_sample
-dotnet build -c Release
+dotnet restore
+dotnet build
 ```
 
-Set your credentials as environment variables.
+Set the required credentials as environment variables. HyperExecute supplies `HYPEREXECUTE_PLATFORM`; it can also be set explicitly when running outside HyperExecute.
 
 **macOS / Linux:**
 
 ```bash
 export LT_USERNAME="YOUR_USERNAME"
 export LT_ACCESS_KEY="YOUR_ACCESS_KEY"
-export LT_TUNNEL="YOUR_TUNNEL_NAME"
+export HYPEREXECUTE_PLATFORM="YOUR_PLATFORM"
 ```
 
 **Windows:**
@@ -45,19 +48,56 @@ export LT_TUNNEL="YOUR_TUNNEL_NAME"
 ```bash
 set LT_USERNAME="YOUR_USERNAME"
 set LT_ACCESS_KEY="YOUR_ACCESS_KEY"
-set LT_TUNNEL="YOUR_TUNNEL_NAME"
+set HYPEREXECUTE_PLATFORM="YOUR_PLATFORM"
 ```
 
 ### Run tests
 
-```
-./hyperexecute --config yaml/dotnet_playwright_hyperexecute_autosplit_sample.yaml --force-clean-artifacts --download-artifacts
+Run all tests:
+
+```bash
+dotnet test
 ```
 
-For parallel matrix execution:
+Run one test or a category:
 
+```bash
+dotnet test --filter "Name~SingleTest"
+dotnet test --filter "Name~IPhoneTest"
+dotnet test --filter "Name~IPadTest"
+dotnet test --filter "TestCategory=Desktop"
+dotnet test --filter "TestCategory=Mobile"
 ```
-./hyperexecute --config yaml/dotnet_playwright_hyperexecute_matrix_sample.yaml --force-clean-artifacts --download-artifacts
+
+The former `dotnet run -- single`, `dotnet run -- iphonetest`, and `dotnet run -- ipadtest` commands have been removed. Tests are now discovered and run through NUnit and `dotnet test`.
+
+### Run with HyperExecute
+
+Recommended (v0.2 framework-based remote test discovery — HyperExecute's .NET
+runner discovers the NUnit tests from the built assembly on the worker, so no
+grep-based discovery command or `testRunnerCommand` is needed):
+
+```bash
+./hyperexecute --user $LT_USERNAME --key $LT_ACCESS_KEY --config yaml/linux/dotnet_playwright_hyperexecute_remote_v2.yaml
+```
+
+The v0.2 config declares the framework and lets HyperExecute do the rest:
+
+```yaml
+framework:
+  name: dotnet/nunit
+  discoveryMode: remote   # dotnet/* runners are remote-discovery only
+  discoveryType: method   # method (default) | class
+  flags:
+    - --project
+    - PlaywrightDotnetTests.csproj
+```
+
+Legacy v0.1 configs (grep-based discovery) are kept under `yaml/linux`, `yaml/mac`,
+and `yaml/win`:
+
+```bash
+./hyperexecute --user $LT_USERNAME --key $LT_ACCESS_KEY --config yaml/linux/dotnet_playwright_hyperexecute_autosplit_sample.yaml
 ```
 
 View results on your TestMu AI dashboard.

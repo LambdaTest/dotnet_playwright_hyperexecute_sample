@@ -1,0 +1,37 @@
+---
+version: "0.2"
+runson: linux
+
+autosplit: true
+concurrency: 3
+
+globalTimeout: 90
+testSuiteTimeout: 90
+testSuiteStep: 90
+
+retryOnFailure: true
+maxRetries: 1
+
+env:
+  HYPEREXECUTE_PLATFORM: "Windows 10"
+
+pre:
+  - dotnet build -c Release
+
+# Framework-based remote test discovery: HyperExecute's .NET runner discovers
+# the NUnit tests from the built assembly on the worker — no grep-based
+# discovery command or testRunnerCommand needed.
+framework:
+  name: dotnet/nunit
+  discoveryMode: remote   # dotnet/* runners are remote-discovery only
+  discoveryType: method   # method (default) | class
+  defaultReports: false   # runner posts results via the HyperExecute callback
+  flags:
+    - --project
+    - PlaywrightDotnetTests.csproj
+
+runtime:
+  language: dotnet
+  version: "8.0"
+
+jobLabel: [playwright-dotnet, linux, remote-discovery, v0.2]

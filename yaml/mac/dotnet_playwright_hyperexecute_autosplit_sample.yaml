@@ -35,13 +35,13 @@ runtime:
 testDiscovery:
   type: raw
   mode: remote
-  command: grep -lr 'GotoAsync' -ir --include=*.cs
+  command: grep -oE '(SingleTest|IPhoneTest|IPadTest)' LambdaTestTests.cs | sort -u
   
 
 post:
   - cat yaml/mac/dotnet_playwright_hyperexecute_autosplit_sample.yaml
 
 
-testRunnerCommand: dotnet run $test
+testRunnerCommand: dotnet test -c Release --no-build --filter "Name~$test"
 
 jobLabel: [playwright-Dotnet, mac, autosplit]
