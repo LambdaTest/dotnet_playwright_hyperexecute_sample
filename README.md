@@ -88,9 +88,8 @@ framework:
   name: dotnet/nunit
   discoveryMode: remote   # dotnet/* runners are remote-discovery only
   discoveryType: method   # method (default) | class
-  flags:
-    - --project
-    - PlaywrightDotnetTests.csproj
+  # single-project repo: the runner locates the csproj and built assembly itself;
+  # multi-project repos pass flags: [--project, <path-to-csproj>]
 ```
 
 Legacy v0.1 configs (grep-based discovery) are kept under `yaml/linux`, `yaml/mac`,
