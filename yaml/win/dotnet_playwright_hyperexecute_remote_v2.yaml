@@ -1,0 +1,41 @@
+---
+version: "0.2"
+runson: win
+
+autosplit: true
+concurrency: 3
+
+globalTimeout: 90
+testSuiteTimeout: 90
+testSuiteStep: 90
+
+retryOnFailure: true
+maxRetries: 1
+
+env:
+  HYPEREXECUTE_PLATFORM: "Windows 10"
+  NUGET_PACKAGES: 'C:\nuget_global_cache'
+  NUGET_HTTP_CACHE_PATH: 'C:\nuget_http_cache'
+  NUGET_PLUGINS_CACHE_PATH: 'C:\nuget_plugins_cache'
+
+pre:
+  # the CDP grid session needs a worker-local playwright matching the
+  # Microsoft.Playwright NuGet version in the csproj
+  - npm install playwright@1.49.0 --save-exact
+  - dotnet build -c Release
+
+# Framework-based remote test discovery: HyperExecute's .NET runner discovers
+# the NUnit tests from the built assembly on the worker — no grep-based
+# discovery command or testRunnerCommand needed.
+framework:
+  name: dotnet/nunit
+  discoveryMode: remote   # dotnet/* runners are remote-discovery only
+  discoveryType: method   # method (default) | class
+  # single-project repo: the runner locates the csproj and built assembly itself;
+  # multi-project repos pass flags: [--project, <path-to-csproj>]
+
+runtime:
+  language: dotnet
+  version: "8.0"
+
+jobLabel: [playwright-dotnet, win, remote-discovery, v0.2]
