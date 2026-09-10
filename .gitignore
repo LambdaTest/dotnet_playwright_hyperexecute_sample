@@ -1,5 +1,14 @@
+bin/
+obj/
+.playwright/
+.DS_Store
+packages.txt
 hyperexecute
 hyperexecute-cli.log
 .updatedhyperexecute.yaml
+.hyperexecute/
+hyperexecute-code-*.zip
 azcopy
 result.json
+logs/
+commands.rxr

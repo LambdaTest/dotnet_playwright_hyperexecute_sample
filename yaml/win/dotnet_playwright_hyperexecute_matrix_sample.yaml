@@ -21,7 +21,7 @@ env:
 
 
 matrix:
-  tests: ["single","iphonetest","ipadtest"]
+  tests: ["SingleTest","IPhoneTest","IPadTest"]
 
 pre:
  # https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-list-package
@@ -44,6 +44,6 @@ post:
 
 
 testSuites:
-  - dotnet run $tests
+  - dotnet test -c Release --no-build --filter "Name~$tests"
 
 jobLabel: [playwright-Dotnet, win, matrix]
