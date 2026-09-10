@@ -92,6 +92,11 @@ framework:
   # multi-project repos pass flags: [--project, <path-to-csproj>]
 ```
 
+The same v0.2 config exists per OS: `yaml/linux`, `yaml/win`, and `yaml/mac` each
+carry a `dotnet_playwright_hyperexecute_remote_v2.yaml`. On win/mac the `pre:` step
+also runs `npm install playwright@1.49.0` — the CDP grid session needs a
+worker-local playwright matching the `Microsoft.Playwright` NuGet version.
+
 Legacy v0.1 configs (grep-based discovery) are kept under `yaml/linux`, `yaml/mac`,
 and `yaml/win`:
 
